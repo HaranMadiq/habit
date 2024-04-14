@@ -135,9 +135,18 @@ router.get("/habitStatus", (req, resp) => {
 
 // Delete Habit
 router.get("/:id", async (req, resp) => {
-    const documentProduct = await Habit.findOneAndRemove({ _id: req.params.id });
-    if (!documentProduct) {
-        resp.status(500).json(err);
-    } resp.redirect('/')
+    try {
+        const documentProduct = await Habit.findOneAndRemove({ _id: req.params.id });
+        
+        if (!documentProduct) {
+            return resp.status(404).json({ error: 'Document not found' });
+        }
+        
+        resp.redirect('/');
+    } catch (error) {
+        console.error('Error:', error);
+        resp.status(500).json({ error: 'An internal server error occurred' });
+    }
 });
+
 module.exports = router;
